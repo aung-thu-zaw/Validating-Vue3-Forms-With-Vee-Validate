@@ -46,7 +46,11 @@
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
+                v-model="password"
               />
+              <span class="text-red-700 text-xs font-semibold">
+                {{ passwordError }}
+              </span>
             </div>
             <div>
               <label
@@ -55,13 +59,18 @@
                 >Confirm password</label
               >
               <input
-                type="confirm-password"
+                type="password"
                 name="confirm-password"
                 id="confirm-password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
+                v-model="confirmPassword"
               />
+
+              <span class="text-red-700 text-xs font-semibold">
+                {{ confirmPasswordError }}
+              </span>
             </div>
             <div class="flex items-start">
               <div class="flex items-center h-5">
@@ -109,25 +118,63 @@
 </template>
 
 <script>
-import { useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 export default {
   setup() {
-    const email = useField("email", function (value) {
-      if (!value) return "This field is required";
+    const validations = {
+      email: (value) => {
+        if (!value) return "This field is required";
 
-      const regex =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const regex =
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-      if (!regex.test(String(value).toLowerCase())) {
-        return "Please enter a valid email address";
-      }
+        if (!regex.test(String(value).toLowerCase())) {
+          return "Please enter a valid email address";
+        }
 
-      return true;
+        return true;
+      },
+      password: (value) => {
+        const requiredMessage = "This field is required";
+        if (!value) return requiredMessage;
+
+        if (value === undefined || value === null) return requiredMessage;
+
+        if (!String(value).length) return requiredMessage;
+
+        return true;
+      },
+      confirmPassword: (value) => {
+        const requiredMessage = "This field is required";
+        if (!value) return requiredMessage;
+
+        if (value === undefined || value === null) return requiredMessage;
+
+        if (!String(value).length) return requiredMessage;
+
+        if (password.value !== value) return "Password does not match.";
+
+        return true;
+      },
+    };
+
+    useForm({
+      validationSchema: validations,
     });
 
+    const { value: email, errorMessage: emailError } = useField("email");
+    const { value: password, errorMessage: passwordError } =
+      useField("password");
+    const { value: confirmPassword, errorMessage: confirmPasswordError } =
+      useField("confirmPassword");
+
     return {
-      email: email.value,
-      emailError: email.errorMessage,
+      email,
+      emailError,
+      password,
+      passwordError,
+      confirmPassword,
+      confirmPasswordError,
     };
   },
 };
