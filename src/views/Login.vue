@@ -26,7 +26,12 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 required=""
+                v-model="email"
               />
+
+              <span class="text-red-700 text-xs font-semibold">
+                {{ emailError }}
+              </span>
             </div>
             <div>
               <label
@@ -41,7 +46,12 @@
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
+                v-model="password"
               />
+
+              <span class="text-red-700 text-xs font-semibold">
+                {{ passwordError }}
+              </span>
             </div>
             <div class="flex items-center justify-between">
               <div class="flex items-start">
@@ -89,7 +99,41 @@
 </template>
 
 <script>
-export default {};
+import { useField } from "vee-validate";
+export default {
+  setup() {
+    const { value: email, errorMessage: emailError } = useField(
+      "email",
+      function (value) {
+        if (!value) return "This field is required";
+
+        const regex =
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!regex.test(String(value).toLowerCase())) {
+          return "Please enter a valid email address";
+        }
+
+        return true;
+      }
+    );
+
+    const { value: password, errorMessage: passwordError } = useField(
+      "password",
+      function (value) {
+        const requiredMessage = "This field is required";
+        if (!value) return requiredMessage;
+
+        if (value === undefined || value === null) return requiredMessage;
+
+        if (!String(value).length) return requiredMessage;
+
+        return true;
+      }
+    );
+    return { email, emailError, password, passwordError };
+  },
+};
 </script>
 
 <style>
