@@ -16,6 +16,12 @@
       >
         Login
       </router-link>
+      <router-link
+        :to="{ name: 'addProduct' }"
+        class="bg-yellow-400 text-white hover:text-slate-700 text-xs rounded-sm px-3 py-2 font-semibold hover:bg-yellow-200 border border-yellow-300"
+      >
+        Create Product
+      </router-link>
     </div>
   </div>
 </template>
