@@ -200,57 +200,29 @@
 
 <script>
 import { useForm, useField } from "vee-validate";
+import * as yup from "yup";
+// import { string, boolean, number, object, array } from "yup";
+
 export default {
   setup() {
-    // Validation Rules
-    const required = (value) => {
-      const requiredMessage = "This field is required";
-      if (!value) return requiredMessage;
-
-      if (value === undefined || value === null) return requiredMessage;
-
-      if (!String(value).length) return requiredMessage;
-
-      return true;
-    };
-
-    const minLength = (number, value) => {
-      if (String(value).length < number)
-        return `Please type at least ${number} characters`;
-
-      return true;
-    };
-
-    const anything = () => {
-      return true;
-    };
-
-    const validationSchema = {
-      name: (value) => {
-        const req = required(value);
-        if (req !== true) return req;
-
-        const min = minLength(5, value);
-        if (min !== true) return min;
-
-        return true;
-      },
-      price: required,
-      category: required,
-      description: required,
-      weight: undefined,
-      brand: undefined,
-      special: anything,
-      featured: anything,
-      warranty: anything,
-    };
+    const validationSchema = yup.object({
+      name: yup.string().required(),
+      price: yup.number().required(),
+      category: yup.string().required(),
+      description: yup.string().required(),
+      weight: yup.string(),
+      brand: yup.string(),
+      special: yup.boolean(),
+      featured: yup.boolean(),
+      warranty: yup.boolean(),
+    });
 
     const { handleSubmit, errors } = useForm({
       validationSchema,
       initialValues: {
         featured: false,
         special: false,
-        warranty: 0,
+        warranty: false,
       },
     });
 
