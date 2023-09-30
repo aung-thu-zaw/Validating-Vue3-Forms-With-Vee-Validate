@@ -159,19 +159,19 @@ export default {
       },
     };
 
-    useForm({
+    const { setFieldValue } = useForm({
       validationSchema: validations,
     });
 
-    const {
-      value: email,
-      errorMessage: emailError,
-      handleChange,
-    } = useField("email");
+    const { value: email, errorMessage: emailError } = useField("email");
     const { value: password, errorMessage: passwordError } =
       useField("password");
     const { value: confirmPassword, errorMessage: confirmPasswordError } =
       useField("confirmPassword");
+
+    const handleChange = (event) => {
+      setFieldValue("email", event.target.value);
+    };
 
     return {
       email,
